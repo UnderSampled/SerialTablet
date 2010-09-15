@@ -7,15 +7,15 @@ TABLETSTATE State = { 0 };
 
 void PrintStatus()
 {
-	int tool = State.values[WACOMFIELD_TOOLTYPE].nValue;
+	int tool = State.toolType;
 
 	printf("Proximity: %d,	ToolType: %s,	Pos_X: %d,	Pos_Y: %d,	Pressure: %d,	Button: %0x\n", 
-		State.values[WACOMFIELD_PROXIMITY].nValue,
+		State.proximity,
 		tool ? (tool == WACOMTOOLTYPE_PEN ? "Pen" : "Eraser") : "none",
-		State.values[WACOMFIELD_POSITION_X].nValue,
-		State.values[WACOMFIELD_POSITION_Y].nValue,
-		State.values[WACOMFIELD_PRESSURE].nValue,
-		State.values[WACOMFIELD_BUTTONS].nValue
+		State.posX,
+		State.posY,
+		State.pressure,
+		State.buttons
 	);
 }
 
@@ -58,12 +58,12 @@ int TabletPC_Parse(const unsigned char* puchData, unsigned int uLength)
 	}
 
 	/* set valid fields */
-	State.values[WACOMFIELD_PROXIMITY].nValue = prox;
-	State.values[WACOMFIELD_TOOLTYPE].nValue = tool;
-	State.values[WACOMFIELD_POSITION_X].nValue = x;
-	State.values[WACOMFIELD_POSITION_Y].nValue = y;
-	State.values[WACOMFIELD_PRESSURE].nValue = press;
-	State.values[WACOMFIELD_BUTTONS].nValue = button;
+	State.proximity = prox;
+	State.toolType = tool;
+	State.posX = x;
+	State.posY = y;
+	State.pressure = press;
+	State.buttons = button;
 
 	return 0;
 }
