@@ -1,10 +1,10 @@
 #define WACOMTOOLTYPE_NONE      0x00
 #define WACOMTOOLTYPE_PEN       0x01
-#define WACOMTOOLTYPE_ERASER    0x04
+#define WACOMTOOLTYPE_ERASER    0x02
 
-#define WACOMBUTTON_TOUCH       5
-#define WACOMBUTTON_STYLUS      6
-#define WACOMBUTTON_STYLUS2     7
+#define WACOMBUTTON_TOUCH       1
+#define WACOMBUTTON_STYLUS      2
+#define WACOMBUTTON_STYLUS2     3
 
 typedef struct
 {
