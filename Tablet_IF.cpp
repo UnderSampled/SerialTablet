@@ -133,7 +133,7 @@ HANDLE SerialInit(LPCWSTR comport, int baudrate)
 			1024,
 			NULL);
 		fprintf(stderr, "error occurred. Could not Read. %s\n", lastError);
-		return (FILE*)FALSE;
+		return (HANDLE)FALSE;
 	}
 
 	// Tablet SPecific Init
