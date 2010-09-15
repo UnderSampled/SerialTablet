@@ -3,30 +3,27 @@
 
 #include "Tablet_IF.h"
 
-TABLETSTATE State = { 0 };
-
-void PrintStatus()
+void PrintStatus(TABLETSTATE state)
 {
-	int tool = State.toolType;
+	int tool = state.toolType;
 
 	printf("Proximity: %d,	ToolType: %s,	Pos_X: %d,	Pos_Y: %d,	Pressure: %d,	Button: %0x\n", 
-		State.proximity,
+		state.proximity,
 		tool ? (tool == WACOMTOOLTYPE_PEN ? "Pen" : "Eraser") : "none",
-		State.posX,
-		State.posY,
-		State.pressure,
-		State.buttons
+		state.posX,
+		state.posY,
+		state.pressure,
+		state.buttons
 	);
 }
 
-int TabletPC_Parse(const unsigned char* puchData, unsigned int uLength)
+TABLETSTATE TabletPC_Parse(const unsigned char* puchData, unsigned int uLength)
 {
+	TABLETSTATE state;
 	int x=0, y=0, prox=0, tool=WACOMTOOLTYPE_NONE,
 			button=0, press=0, eraser;
 
 	/* Tablet PC Supports: 256 pressure, eraser, 1/2 side-switch */
-
-	if (uLength != 9) { return 1; }
 
 	prox = puchData[0] & 0x20 ? 1 : 0;
 	if (prox)
@@ -58,14 +55,14 @@ int TabletPC_Parse(const unsigned char* puchData, unsigned int uLength)
 	}
 
 	/* set valid fields */
-	State.proximity = prox;
-	State.toolType = tool;
-	State.posX = x;
-	State.posY = y;
-	State.pressure = press;
-	State.buttons = button;
+	state.proximity = prox;
+	state.toolType = tool;
+	state.posX = x;
+	state.posY = y;
+	state.pressure = press;
+	state.buttons = button;
 
-	return 0;
+	return state;
 }
 
 HANDLE SerialInit(LPCWSTR comport, int baudrate)

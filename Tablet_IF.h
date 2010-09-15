@@ -6,8 +6,6 @@
 #define WACOMBUTTON_STYLUS      6
 #define WACOMBUTTON_STYLUS2     7
 
-#define WACOMFIELD_MAX          14
-
 typedef struct
 {
 	int proximity;
@@ -20,11 +18,9 @@ typedef struct
 
 #define BIT(x) (1<<(x))
 
-extern TABLETSTATE State;
+void PrintStatus(TABLETSTATE state);
 
-void PrintStatus();
-
-extern int TabletPC_Parse(const unsigned char* puchData, unsigned int uLength);
+TABLETSTATE TabletPC_Parse(const unsigned char* puchData, unsigned int uLength);
 
 HANDLE SerialInit(LPCWSTR comport, int baudrate);
 DWORD SerialReadRaw(HANDLE fSerial, unsigned char* puchData, unsigned int uSize);

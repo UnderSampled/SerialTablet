@@ -7,6 +7,7 @@
 int main()
 {
 	unsigned char szBuff[9] = {0};
+	TABLETSTATE state;
 
 	INPUT  Input={0};
 
@@ -17,20 +18,20 @@ int main()
 	while (1) {
 		if (sizeof(szBuff)==SerialReadRaw(hSerial, szBuff, sizeof(szBuff)))
 		{
-			if (TabletPC_Parse(szBuff, sizeof(szBuff))){printf("Error: Length Incorrect\n");} else {printf("Successfully parsed tablet.\n");}
-			PrintStatus();
+			state = TabletPC_Parse(szBuff, sizeof(szBuff));
+			PrintStatus(state);
 			
-			if (State.proximity)
+			if (state.proximity)
 			{
 				::ZeroMemory(&Input,sizeof(INPUT));
 
 				Input.type = INPUT_MOUSE;
 				Input.mi.dwFlags  = MOUSEEVENTF_MOVE|MOUSEEVENTF_ABSOLUTE;
-				Input.mi.dx = ceil(State.posX*2.15948333);
-				Input.mi.dy = ceil(State.posY*3.45508224);
+				Input.mi.dx = ceil(state.posX*2.15948333);
+				Input.mi.dy = ceil(state.posY*3.45508224);
 				::SendInput(1,&Input,sizeof(INPUT));
 			}
-			if (State.buttons & BIT(WACOMBUTTON_TOUCH))
+			if (state.buttons & BIT(WACOMBUTTON_TOUCH))
 			{
 				//::ZeroMemory(&Input,sizeof(INPUT));
 
