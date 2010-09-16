@@ -7,9 +7,11 @@
 int main()
 {
 	unsigned char szBuff[9] = {0};
-	TABLETSTATE state;
+	TABLETSTATE state, prevState;
 
 	INPUT  Input={0};
+
+	bool rightMouse, middleMouse;
 
 	HANDLE hSerial;
 	hSerial = SerialInit(L"COM2", CBR_19200);
@@ -18,7 +20,7 @@ int main()
 	while (1) {
 		if (sizeof(szBuff)==SerialReadRaw(hSerial, szBuff, sizeof(szBuff)))
 		{
-			state = TabletPC_Parse(szBuff, sizeof(szBuff));
+			state = TabletPC_Parse(szBuff);
 			PrintStatus(state);
 			
 			if (state.proximity)
@@ -31,22 +33,42 @@ int main()
 				Input.mi.dy = ceil(state.posY*3.45508224);
 				::SendInput(1,&Input,sizeof(INPUT));
 			}
-			if (state.buttons & BIT(WACOMBUTTON_TOUCH))
+			if ((state.buttons & BIT(WACOMBUTTON_TOUCH)) != (prevState.buttons & BIT(WACOMBUTTON_TOUCH)))
 			{
-				//::ZeroMemory(&Input,sizeof(INPUT));
+				if (state.buttons & BIT(WACOMBUTTON_TOUCH))
+				{
+					::ZeroMemory(&Input,sizeof(INPUT));
 
-				//Input.type = INPUT_MOUSE;
-				//Input.mi.dwFlags  = MOUSEEVENTF_LEFTDOWN;
-				//::SendInput(1,&Input,sizeof(INPUT));
-				printf("down\n");
-			} else {
-				//::ZeroMemory(&Input,sizeof(INPUT));
+					Input.type = INPUT_MOUSE;
 
-				//Input.type = INPUT_MOUSE;
-				//Input.mi.dwFlags  = MOUSEEVENTF_LEFTUP;
-				//::SendInput(1,&Input,sizeof(INPUT));
-				printf("up\n");
+					if (state.tool == WACOMTOOLTYPE_ERASER) {
+						Input.mi.dwFlags = MOUSEEVENTF_MIDDLEDOWN;
+						middleMouse = true;
+					} else if (state.buttons & BIT(WACOMBUTTON_STYLUS)) {
+						Input.mi.dwFlags = MOUSEEVENTF_RIGHTDOWN;
+						rightMouse = true;
+					} else {
+						Input.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
+					}
+					::SendInput(1,&Input,sizeof(INPUT));
+				} else {
+					::ZeroMemory(&Input,sizeof(INPUT));
+
+					Input.type = INPUT_MOUSE;
+
+					if (middleMouse) {
+						Input.mi.dwFlags = MOUSEEVENTF_MIDDLEUP;
+						middleMouse = false;
+					} else if (rightMouse) {
+						Input.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
+						rightMouse = false;
+					} else {
+						Input.mi.dwFlags = MOUSEEVENTF_LEFTUP;
+					}
+					::SendInput(1,&Input,sizeof(INPUT));
+				}
 			}
+			prevState = state;
 		}
 	}
 

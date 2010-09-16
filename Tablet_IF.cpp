@@ -5,11 +5,11 @@
 
 void PrintStatus(TABLETSTATE state)
 {
-	int tool = state.toolType;
+	int tool = state.tool;
 
-	printf("Proximity: %d,	ToolType: %s,	Pos_X: %d,	Pos_Y: %d,	Pressure: %d,	Button: %0x\n", 
+	printf("Proximity: %d,	Tool: %s,	Pos_X: %d,	Pos_Y: %d,	Pressure: %d,	Button: %0x\n", 
 		state.proximity,
-		tool ? (tool == WACOMTOOLTYPE_PEN ? "Pen" : "Eraser") : "none",
+		tool ? (tool == WACOMTOOLTYPE_ERASER ? "Eraser" : "Pen") : "none",
 		state.posX,
 		state.posY,
 		state.pressure,
@@ -17,7 +17,7 @@ void PrintStatus(TABLETSTATE state)
 	);
 }
 
-TABLETSTATE TabletPC_Parse(const unsigned char* puchData, unsigned int uLength)
+TABLETSTATE TabletPC_Parse(const unsigned char* puchData)
 {
 	TABLETSTATE state;
 	int x=0, y=0, prox=0, tool=WACOMTOOLTYPE_NONE,
@@ -56,7 +56,7 @@ TABLETSTATE TabletPC_Parse(const unsigned char* puchData, unsigned int uLength)
 
 	/* set valid fields */
 	state.proximity = prox;
-	state.toolType = tool;
+	state.tool = tool;
 	state.posX = x;
 	state.posY = y;
 	state.pressure = press;

@@ -9,7 +9,7 @@
 typedef struct
 {
 	int proximity;
-	int toolType;
+	int tool;
 	int posX;
 	int posY;
 	int pressure;
@@ -20,7 +20,7 @@ typedef struct
 
 void PrintStatus(TABLETSTATE state);
 
-TABLETSTATE TabletPC_Parse(const unsigned char* puchData, unsigned int uLength);
+TABLETSTATE TabletPC_Parse(const unsigned char* puchData);
 
 HANDLE SerialInit(LPCWSTR comport, int baudrate);
 DWORD SerialReadRaw(HANDLE fSerial, unsigned char* puchData, unsigned int uSize);
